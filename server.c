@@ -5,11 +5,12 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 #define MAX 1000
 #define PORT 8081
 #define SA struct sockaddr
 
-bool sockstate = false;
+int sockstate = 0;
 // Function designed for chat between client and server.
 void func(int sockfd)
 {
@@ -22,9 +23,9 @@ void func(int sockfd)
 		// read the message from client and copy it in buffer
 		read(sockfd, buff, sizeof(buff));
 
-		if(!sockstate) {
+		if(sockstate==0) {
 			if(strcmp(buff,"connect")==0) {
-				sockstate = true;
+				sockstate = 1;
 				printf("Client %d has asked to connect.", sockfd);
 				bzero(buff, MAX);
 				n = 0;
