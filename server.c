@@ -10,7 +10,8 @@
 #define PORT 8081
 #define SA struct sockaddr
 
-int sockstate = 0;
+int state = 0;
+
 // Function designed for chat between client and server.
 void func(int sockfd)
 {
@@ -22,28 +23,29 @@ void func(int sockfd)
 
 		// read the message from client and copy it in buffer
 		read(sockfd, buff, sizeof(buff));
-
-		if(sockstate==0) {
-			if(strcmp(buff,"connect")==0) {
-				sockstate = 1;
-				printf("Client %d has asked to connect.", sockfd);
+		//printf("From client: %s\t To client : ", buff);
+		
+		if(state==0) {
+			//printf("%d", strcmp(buff, "connect"));
+			
+				state = 1;
+				//printf("Client %d has asked to connect.", sockfd);
 				bzero(buff, MAX);
 				n = 0;
 				strcpy(buff, "Please enter the digital signature for the genkey.c file.");
 				write(sockfd, buff, sizeof(buff));
-			}
+			
 		} else {
 			static char sig[1000];
 			strcpy(sig, buff);
-		}
+			strcpy(buff, "success");
+			write(sockfd, buff, sizeof(buff));
+			}
 		
-		/*
-		// copy server message in the buffer
-		while ((buff[n++] = getchar()) != '\n')
-			;
-
-		// and send that buffer to client
-		*/
+		//while ((buff[n++] = getchar()) != '\n');
+   
+        // and send that buffer to client
+        //write(sockfd, buff, sizeof(buff));
 
 		// if msg contains "Exit" then server exit and chat ended.
 		if (strncmp("exit", buff, 4) == 0) {
