@@ -42,7 +42,7 @@ static void hashing(FILE *fp,big c_hash) {
 
 miracl *mip;
 
-int verify(static char sig[])
+int verify(char sig[])
 {  
     
     /*  encode using public key, e = 3, N = 'taken from file'  */
@@ -91,8 +91,7 @@ int verify(static char sig[])
 }
 
 // Function designed for chat between client and server.
-void func(int sockfd)
-{
+void func(int sockfd) {
 	char buff[MAX];
 	int n;
 	// infinite loop for chat
@@ -117,6 +116,9 @@ void func(int sockfd)
 			else 
 				strcpy(buff, "Verification Failed! Client rejected.");
 			write(sockfd, buff, sizeof(buff));
+			printf("%s", buff);
+			int test;
+			scanf("%d", &test);
 		}
 
 		// if msg contains "Exit" then server exit and chat ended.
@@ -128,15 +130,14 @@ void func(int sockfd)
 }
 
 // Driver function
-int main()
-{
+int main() {
 	int sockfd, connfd, len;
 	struct sockaddr_in servaddr, cli;
 
 	// socket create and verification
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1) {
-		printf("socket creation failed...\n");
+		printf("Socket creation failed...\n");
 		exit(0);
 	}
 	else
@@ -150,7 +151,7 @@ int main()
 
 	// Binding newly created socket to given IP and verification
 	if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) {
-		printf("socket bind failed...\n");
+		printf("Socket bind failed...\n");
 		exit(0);
 	}
 	else
@@ -168,11 +169,11 @@ int main()
 	// Accept the data packet from client and verification
 	connfd = accept(sockfd, (SA*)&cli, &len);
 	if (connfd < 0) {
-		printf("server accept failed...\n");
+		printf("Server accept failed...\n");
 		exit(0);
 	}
 	else
-		printf("server accept the client...\n");
+		printf("Client joined...\n");
 
 	// Function for chatting between client and server
 	func(connfd);
