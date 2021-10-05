@@ -105,16 +105,16 @@ void func(int sockfd) {
 			state = 1;
 			bzero(buff, MAX);
 			n = 0;
-			strcpy(buff, "Please enter the digital signature for the genkey.c file:");
+			strcpy(buff, "Please enter the signature:");
 			write(sockfd, buff, sizeof(buff));
 			
 		} else {
 			static char sig[1000];
 			strcpy(sig, buff);
 			if(verify(sig)==1)
-				strcpy(buff, "Verification Success! Client is authenticated!");
+				strcpy(buff, "Verification Success! Authenticated!");
 			else 
-				strcpy(buff, "Verification Failed! Client rejected.");
+				strcpy(buff, "Verification Failed! Rejected.");
 			write(sockfd, buff, sizeof(buff));
 			printf("%s", buff);
 			int test;

@@ -53,7 +53,7 @@ int main()
 		exit(0);
 	}
 	else
-		printf("connected to the server..\n");
+		printf("Joined the server, type 'connect'\n");
 
 	// function for chat
 	func(sockfd);
