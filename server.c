@@ -6,11 +6,89 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "miracl.h"   /* include MIRACL system */
+#include <math.h>
 #define MAX 1000
 #define PORT 8081
 #define SA struct sockaddr
 
 int state = 0;
+
+void strip(char *name) { 
+    /* strip off filename extension */
+    int i;
+    for (i=0; name[i]!='\0'; i++)
+    {
+        if (name[i]!='.') continue;
+        name[i]='\0';
+        break;
+    }
+}
+
+static void hashing(FILE *fp,big c_hash) {
+	/* compute hash function */
+    char h[20];
+    int i,ch;
+    sha sh;
+
+    shs_init(&sh);
+
+    while ((ch=fgetc(fp))!=EOF)
+        shs_process(&sh,ch);
+    
+    shs_hash(&sh,h);
+    bytes_to_big(20,h,c_hash);
+}
+
+miracl *mip;
+
+int verify(static char sig[])
+{  
+    
+    /*  encode using public key, e = 3, N = 'taken from file'  */
+    big N,e,s,c_hash,s_hash,t;
+
+    FILE *ifile;
+
+    mip=mirsys(100,0);
+
+    N=mirvar(0);
+    e=mirvar(0);
+    s=mirvar(0);
+    c_hash=mirvar(0);
+    s_hash=mirvar(0);
+    t=mirvar(0);
+
+
+    /*Read Public Parameters from file public.key*/
+    ifile=fopen("public.key","rt");
+    mip->IOBASE=16;
+    cinnum(N,ifile);
+    cinnum(e,ifile);
+    fclose(ifile);
+
+    
+    ifile=fopen("genkey.c","rt");
+
+    mip->IOBASE=128;
+
+    hashing(ifile,c_hash);
+    fclose(ifile);
+
+    copy(N,t);
+    divide(c_hash,t,t);
+    
+    mip->IOBASE=16;
+
+    cinstr(s,sig);
+    powmod(s,e,N,s_hash);
+
+    if (mr_compare(s_hash,c_hash) == 0) {
+        return 1;
+    } else {
+		return 0;
+	}
+}
 
 // Function designed for chat between client and server.
 void func(int sockfd)
@@ -21,31 +99,25 @@ void func(int sockfd)
 	for (;;) {
 		bzero(buff, MAX);
 
-		// read the message from client and copy it in buffer
 		read(sockfd, buff, sizeof(buff));
-		//printf("From client: %s\t To client : ", buff);
+
 		
 		if(state==0) {
-			//printf("%d", strcmp(buff, "connect"));
-			
-				state = 1;
-				//printf("Client %d has asked to connect.", sockfd);
-				bzero(buff, MAX);
-				n = 0;
-				strcpy(buff, "Please enter the digital signature for the genkey.c file.");
-				write(sockfd, buff, sizeof(buff));
+			state = 1;
+			bzero(buff, MAX);
+			n = 0;
+			strcpy(buff, "Please enter the digital signature for the genkey.c file:");
+			write(sockfd, buff, sizeof(buff));
 			
 		} else {
 			static char sig[1000];
 			strcpy(sig, buff);
-			strcpy(buff, "success");
+			if(verify(sig)==1)
+				strcpy(buff, "Verification Success! Client is authenticated!");
+			else 
+				strcpy(buff, "Verification Failed! Client rejected.");
 			write(sockfd, buff, sizeof(buff));
-			}
-		
-		//while ((buff[n++] = getchar()) != '\n');
-   
-        // and send that buffer to client
-        //write(sockfd, buff, sizeof(buff));
+		}
 
 		// if msg contains "Exit" then server exit and chat ended.
 		if (strncmp("exit", buff, 4) == 0) {
