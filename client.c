@@ -7,8 +7,8 @@
 #define MAX 1000
 #define PORT 8081
 #define SA struct sockaddr
-void func(int sockfd)
-{
+
+void func(int sockfd) {
 	char buff[MAX];
 	int n;
 	for (;;) {
@@ -27,8 +27,7 @@ void func(int sockfd)
 	}
 }
 
-int main()
-{
+int main() {
 	int sockfd, connfd;
 	struct sockaddr_in servaddr, cli;
 

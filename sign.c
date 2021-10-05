@@ -6,8 +6,7 @@
 #include <string.h>
 #include <math.h>
 
-void strip(char *name)
-{ 
+void strip(char *name) { 
     /* strip off filename extension */
     int i;
     for (i=0; name[i]!='\0'; i++)
@@ -18,8 +17,8 @@ void strip(char *name)
     }
 }
 
-static void hashing(FILE *fp,big hash)
-{ /* compute hash function */
+static void hashing(FILE *fp,big hash) {
+    /* compute hash function */
     char h[20];
     int i,ch;
     sha sh;
@@ -35,8 +34,7 @@ static void hashing(FILE *fp,big hash)
 
 miracl *mip;
 
-int main()
-{  
+int main() {  
     
     /*  encode using public key, e = 3, N = 'taken from file'  */
     big N,e,d,p,q,n,hash,s;

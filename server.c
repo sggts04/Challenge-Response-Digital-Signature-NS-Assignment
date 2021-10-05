@@ -42,8 +42,7 @@ static void hashing(FILE *fp,big c_hash) {
 
 miracl *mip;
 
-int verify(char sig[])
-{  
+int verify(char sig[]) {  
     
     /*  encode using public key, e = 3, N = 'taken from file'  */
     big N,e,s,c_hash,s_hash,t;

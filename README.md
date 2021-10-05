@@ -1,5 +1,20 @@
 ## Challenge-Response Protocol using a Digital Signature
 
+### Run locally
+For compilation, the miracl library has been used. The compiled `.a` file and header files have been included but in case they don't work for your system. [Please follow this guide to install miracl yourself.](https://adityagudimetla.medium.com/installing-miracl-for-dummies-7eb7192c3285)
+
+```bash
+gcc genkey.c -o genkey -I ./include libmiracl.a
+./genkey    // to generate keys
+gcc sign.c -o sign -I ./include libmiracl.a
+./sign      // to generate digital signature
+gcc server.c -o server -I ./include libmiracl.a
+gcc client.c -o client -I ./include libmiracl.a
+```
+Then run `./server` and `./client` on two separate terminals.
+
+### Walkthrough
+
 We have implemented a client-server setup where the server has access to the public key of the client while the client owns the corresponding private key.
 
 First part of the code is `genkey.c` which generates the public-private key pair.

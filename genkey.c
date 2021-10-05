@@ -10,8 +10,7 @@ static miracl *mip;
 static big pd,pl,ph;
 
 /* generate strong prime number =11 mod 12 suitable for RSA encryption */
-void strongp(big p,int n)
-{ 
+void strongp(big p,int n) { 
     long seed1, seed2;
     printf("Seed 1? ");
     scanf("%ld",&seed1);
@@ -42,18 +41,16 @@ void strongp(big p,int n)
         r++;
 
     incr(ph,r,ph);
-    do 
-    { 
+    do { 
         /* find p=2*r*pd+1 = 11 mod 12 */
         multiply(ph,pd,p);
         premult(p,2,p);
         incr(p,1,p);
         incr(ph,12,ph);
-    }while (!isprime(p));
+    } while (!isprime(p));
 }
 
-int main()
-{  
+int main() {  
 
     /*  calculate public (N,e) and private keys (p,q)  *
     *  for rsa encryption                 */
@@ -70,7 +67,7 @@ int main()
 
     gprime(15000);  /* speeds up large prime generation */
 
-    for (i=0;i<NP;i++) 
+    for(i=0;i<NP;i++) 
         p[i]=mirvar(0);
 
     N=mirvar(0);
@@ -89,8 +86,7 @@ int main()
     printf("Generating RSA parameters...\n");
     printf("Please wait....\n");
     convert(1,N);  /* Converts 1 to big number and stores it inside ke*/
-    for (i=0;i<NP;i++) 
-    {   
+    for(i=0;i<NP;i++) {   
         printf("Generating prime number %d...\n",i+1);
         strongp(p[i],PRIME_BITS);
         multiply(N,p[i],N);
@@ -105,11 +101,10 @@ int main()
     /*Choose e s.t. 1 < e < n and e & n are co-prime*/
     convert(0,z);
     convert(1,o);
-    do
-    {
+    do {
         bigrand(n,e);
         egcd(e,n,t);
-    }while(mr_compare(e,z) == 0 || mr_compare(e,o) == 0 || mr_compare(t,o) != 0);
+    } while(mr_compare(e,z) == 0 || mr_compare(e,o) == 0 || mr_compare(t,o) != 0);
     
 
     /*Computing d s.t. ed = 1 mod n*/
